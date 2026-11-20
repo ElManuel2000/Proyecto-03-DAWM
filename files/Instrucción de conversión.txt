@@ -1,0 +1,9 @@
+Se accedió al siguiente link: https://csvjson.com/
+
+Se arrastró el archivo flavors_of_cacao.csv donde indica la página
+
+Se descargó el archivo flavors_of_cacao.json que devolvió la página
+
+Se abrió el archivo flavors_of_cacao.json con Visual Studio Code, y se presionó Ctrl+f para buscar
+todas las veces que se encontraban los caracteres "\n" y se seleccionó la opción de reemplazar todos
+para eliminarlos
