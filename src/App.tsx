@@ -1,15 +1,35 @@
+import { useState } from 'react';
 import { Grid, Card, Stack } from '@mui/material'
+import chocolates from '../files/flavors_of_cacao.json'
+import FiltroLugar from './components/Filtro_lugar'
+import IndicatorUI from './components/Indicador'
+import TableUI from './components/Tabla'
 import './App.css'
+import Boton from './components/BotonDescarga';
+import Scatter from './components/GDispersion';
+import Bar from './components/GBarras';
+import Line from './components/GLineas';
 
 function App() {
+
+  const [selectedOption, setSelectedOption] = useState('');
+
+  function aplicarFiltros(datos: any[], selectedOption: string) {
+    return selectedOption ? datos.filter(reseña => reseña['Company Location'] === selectedOption) : datos;
+  }
+
+  const chocolatesFiltrador = aplicarFiltros(chocolates, selectedOption);
   
   return (
     
     <Grid container spacing={2} sx={{justifyContent:"center", alignItems:"center"}}>
 
       {/* Barra lateral con filtros */}
-      <Grid size={{xs:12, md:3}} sx={{display: { xs: 'none', md: 'block' }, backgroundColor: "red"}}>
-        <Card>Filtros feos</Card>
+      <Grid size={{xs:12, md:3}} sx={{display: { xs: 'none', md: 'block' }}}>
+        <FiltroLugar onOptionSelect={setSelectedOption} />
+        <p>
+          Pingas: <span style={{ textTransform: 'capitalize', fontWeight: 'bold' }}>{selectedOption}</span>
+        </p>
       </Grid>
 
       {/* Main */}
@@ -27,7 +47,7 @@ function App() {
 
             {/* Botón de descarga */}
             <Grid size={{xs:12, md:6}}>
-              <Card>Botón de descarga</Card>
+              <Boton texto="Descargar Datos" />
             </Grid>
 
           </Grid>
@@ -36,15 +56,15 @@ function App() {
           <Grid container size={{xs:12, md:12}}>
             
             <Grid size={{xs:12, md:4}}>
-              <Card>Indicador 1</Card>
+              <IndicatorUI title="Cantidad de datos" contenido={chocolatesFiltrador.length} />
             </Grid>
 
             <Grid size={{xs:12, md:4}}>
-              <Card>Indicador 2</Card>
+              <IndicatorUI title="Puntaje promedio" contenido={`${Math.round((chocolatesFiltrador.reduce((inicial, actual) => inicial + actual['Rating'], 0) / chocolatesFiltrador.length) * 100) / 100} / 5.0`} />
             </Grid>
 
             <Grid size={{xs:12, md:4}}>
-              <Card>Indicador 3</Card>
+              <IndicatorUI title="Porcentaje de cocoa promedio" contenido={`${Math.round((chocolatesFiltrador.map((reseña) => Number(reseña['Cocoa Percent'].replace("%",""))).reduce((inicial, actual) => inicial + actual, 0) / chocolatesFiltrador.length) * 10) / 10} %`} />
             </Grid>
 
           </Grid>
@@ -56,19 +76,22 @@ function App() {
             <Grid container size={{xs:12, md:6}}>
               
               <Grid size={{xs:12, md:12}}>
-                <Card>Gráfico 1</Card>
+                <Scatter lista={chocolatesFiltrador} />
               </Grid>
 
             </Grid>
 
             {/* Segundos gráficos */}
             <Grid container size={{xs:12, md:6}}>
+              
               <Grid size={{xs:12, md:12}}>
-                <Card>Gráfico 2</Card>
+                <Bar lista={chocolatesFiltrador} />
               </Grid>
+
               <Grid size={{xs:12, md:12}}>
-                <Card>Gráfico 3</Card>
+                <Line lista={chocolatesFiltrador} />
               </Grid>
+
             </Grid>
 
           </Grid>
@@ -76,7 +99,7 @@ function App() {
           {/* Tabla */}
           <Grid container size={{xs:12, md:12}}>
             <Grid size={{xs:12, md:12}}>
-              <Card>Tabla</Card>
+              <TableUI lista={chocolatesFiltrador} />
             </Grid>
           </Grid>
 
