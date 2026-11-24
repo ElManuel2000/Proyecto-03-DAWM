@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Grid, Card, Stack } from '@mui/material'
+import { Grid, Card, Stack, Button, Drawer, Box } from '@mui/material'
 import chocolates from '../files/flavors_of_cacao.json'
 import FiltroLugar from './components/Filtro_lugar'
 import IndicatorUI from './components/Indicador'
@@ -9,6 +9,7 @@ import Boton from './components/BotonDescarga';
 import Scatter from './components/GDispersion';
 import Bar from './components/GBarras';
 import Line from './components/GLineas';
+import Header from './components/Encabezado';
 
 function App() {
 
@@ -19,6 +20,13 @@ function App() {
   }
 
   const chocolatesFiltrador = aplicarFiltros(chocolates, selectedOption);
+
+  {/* Componentes para barra lateral */}
+  const [open, setOpen] = useState(false);
+
+      const toggleDrawer = (newOpen: boolean) => () => {
+        setOpen(newOpen);
+      };
   
   return (
     
@@ -28,8 +36,17 @@ function App() {
       <Grid size={{xs:12, md:3}} sx={{display: { xs: 'none', md: 'block' }}}>
         <FiltroLugar onOptionSelect={setSelectedOption} />
         <p>
-          Pingas: <span style={{ textTransform: 'capitalize', fontWeight: 'bold' }}>{selectedOption}</span>
+          Filtro: <span style={{ textTransform: 'capitalize', fontWeight: 'bold' }}>{selectedOption}</span>
         </p>
+      </Grid>
+
+      <Grid size={{xs:12, md:12}} sx={{display: { xs: 'block', md: 'none' }}}>
+        <Button variant="outlined" color="success" onClick={toggleDrawer(true)}>☰</Button>
+        <Drawer open={open} onClose={toggleDrawer(false)}>
+            <Box sx={{ height: '100%', width: 250, padding: 2, alignItems:"center" }}>
+                <FiltroLugar onOptionSelect={setSelectedOption} />
+            </Box>
+        </Drawer>
       </Grid>
 
       {/* Main */}
@@ -41,12 +58,14 @@ function App() {
           <Grid container size={{xs:12, md:12}}>
             
             {/* Titulo de la pagina */}
-            <Grid size={{xs:12, md:6}}>
-              <Card>Titulo de la pagina</Card>
+            <Grid size={{xs:12, md:9}}>
+              <Card>
+                <Header />
+              </Card>
             </Grid>
 
             {/* Botón de descarga */}
-            <Grid size={{xs:12, md:6}}>
+            <Grid size={{xs:12, md:3}}>
               <Boton texto="Descargar Datos" />
             </Grid>
 
