@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Grid, Card, Stack, Button, Drawer, Box } from '@mui/material'
-import chocolates from '../files/flavors_of_cacao.json'
-import FiltroLugar from './components/Filtro_lugar'
+import FiltroLugar from './components/Filtro'
 import IndicatorUI from './components/Indicador'
 import TableUI from './components/Tabla'
 import './App.css'
@@ -10,16 +9,26 @@ import Scatter from './components/GDispersion';
 import Bar from './components/GBarras';
 import Line from './components/GLineas';
 import Header from './components/Encabezado';
+import useFetchData from './hooks/useFetchData';
+import Typography from '@mui/material/Typography';
 
 function App() {
 
-  const [selectedOption, setSelectedOption] = useState('');
+  const chocolates = useFetchData();
 
-  function aplicarFiltros(datos: any[], selectedOption: string) {
-    return selectedOption ? datos.filter(reseña => reseña['Company Location'] === selectedOption) : datos;
+  const [selectedCLocation, setSelectedCLocation] = useState('');
+
+  const [selectedBType, setSelectedBType] = useState('');
+
+  const [selectedBBOrigin, setSelectedBBOrigin] = useState('');
+
+  function aplicarFiltros(datos: any[], selectedOption1: string, selectedOption2: string, selectedOption3: string) {
+    return datos.filter(reseña => selectedOption1 ? reseña['Company Location'] == selectedOption1 : true)
+    .filter(reseña => selectedOption2 ? reseña['Bean Type'] == selectedOption2 : true)
+    .filter(reseña => selectedOption3 ? reseña['Broad Bean Origin'] == selectedOption3 : true)
   }
 
-  const chocolatesFiltrador = aplicarFiltros(chocolates, selectedOption);
+  const chocolatesFiltrador = aplicarFiltros(chocolates, selectedCLocation, selectedBType, selectedBBOrigin);
 
   {/* Componentes para barra lateral */}
   const [open, setOpen] = useState(false);
@@ -33,18 +42,35 @@ function App() {
     <Grid container spacing={2} sx={{justifyContent:"center", alignItems:"center"}}>
 
       {/* Barra lateral con filtros */}
-      <Grid size={{xs:12, md:3}} sx={{display: { xs: 'none', md: 'block' }}}>
-        <FiltroLugar onOptionSelect={setSelectedOption} />
-        <p>
-          Filtro: <span style={{ textTransform: 'capitalize', fontWeight: 'bold' }}>{selectedOption}</span>
-        </p>
+      <Grid size={{xs:12, md:3}} sx={{display: { xs: 'none', md: 'block' }, padding:2}}>
+
+        <Typography variant="h5" component="div" sx={{textAlign: "left"}}>Filtros</Typography>
+
+        <br/>
+
+        <FiltroLugar onOptionSelect={setSelectedCLocation} opciones={chocolates} parametro='Company Location' />
+
+        <FiltroLugar onOptionSelect={setSelectedBType} opciones={chocolates} parametro='Bean Type' />
+
+        <FiltroLugar onOptionSelect={setSelectedBBOrigin} opciones={chocolates} parametro='Broad Bean Origin' />
+
       </Grid>
 
       <Grid size={{xs:12, md:12}} sx={{display: { xs: 'block', md: 'none' }}}>
         <Button variant="outlined" color="success" onClick={toggleDrawer(true)}>☰</Button>
         <Drawer open={open} onClose={toggleDrawer(false)}>
             <Box sx={{ height: '100%', width: 250, padding: 2, alignItems:"center" }}>
-                <FiltroLugar onOptionSelect={setSelectedOption} />
+                
+                <Typography variant="h5" component="div" sx={{textAlign: "left"}}>Filtros</Typography>
+
+                <br/>
+
+                <FiltroLugar onOptionSelect={setSelectedCLocation} opciones={chocolates} parametro='Company Location' />
+
+                <FiltroLugar onOptionSelect={setSelectedBType} opciones={chocolates} parametro='Bean Type' />
+
+                <FiltroLugar onOptionSelect={setSelectedBBOrigin} opciones={chocolates} parametro='Broad Bean Origin' />
+
             </Box>
         </Drawer>
       </Grid>
